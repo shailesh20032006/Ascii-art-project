@@ -2,7 +2,7 @@ import os
 import sys
 from typing import List
 
-# raw font data (5 rows). Each character width = 6 columns. ``````
+# raw font data (5 rows). Each character width = 6 columns. ```````
 DATA = [
     " ***  ****   ***  ****  ***** *****  ***  *   * ***** ***** *   * *     *   * *   *  ***  ****   ***  ****   **** ***** *   * *   * *   * *   * *   * *****        ***                     ***  ***   ****  ****  *   * *****  ***  *****  ***  ***** ",
     "*   * *   * *   * *   * *     *     *     *   *   *      *  *  *  *     ** ** **  * *   * *   * *   * *   * *       *   *   * *   * *   *  * *   * *     *        * ***                   *   *   *       *     * *   * *     *         * *   * *   * ",
@@ -27,7 +27,6 @@ COLORS = {
 RESET = "\033[0m"
 
 
-# Supported character mapping
 def char_index(ch: str) -> int:
     ch = ch.upper()
     if ch == " ":
@@ -56,7 +55,7 @@ def render_string(text: str) -> List[str]:
             try:
                 idx = char_index(ch)
             except ValueError:
-                idx = 26  
+                idx = 26
             start = idx * CHAR_WIDTH
             segment = data_row[start:start + CHAR_WIDTH]
             line_chars.append(segment)
@@ -117,8 +116,9 @@ def show_menu():
     print("3 - Range (example A-D)")
     print("4 - Only Alphabets")
     print("5 - Only Numbers")
-    print("6 - Save Previous Output")
-    print("7 - Exit")
+    print("6 - lowercase → UPPERCASE")
+    print("7 - Save Previous Output")
+    print("8 - Exit")
     print("====================================")
 
 
@@ -128,9 +128,9 @@ def run():
 
     while True:
         show_menu()
-        choice = input("Enter choice (1-7): ").strip()
+        choice = input("Enter choice (1-8): ").strip()
 
-        if choice in {"1", "2", "3", "4", "5"}:
+        if choice in {"1", "2", "3", "4", "5", "6", "7"}:
             last_color = choose_color()
 
         if choice == "1":
@@ -150,13 +150,11 @@ def run():
             if len(raw) != 3 or raw[1] != "-" or not raw[0].isalpha() or not raw[2].isalpha():
                 print("Invalid format.")
                 continue
-
             s = ord(raw[0]) - ord("A")
             e = ord(raw[2]) - ord("A")
             if s > e or (e - s + 1) > 15:
                 print("Invalid range or too long.")
                 continue
-
             txt = "".join(chr(ord("A") + i) for i in range(s, e + 1))
             last_output = render_string(txt)
             clear_screen()
@@ -174,21 +172,36 @@ def run():
             clear_screen()
             display_output(last_output, last_color)
 
+        # ============================
+        # NEW OPTION 6
+        # lowercase → UPPERCASE
+        # ============================
         elif choice == "6":
+            txt = input("Enter lowercase text: ").strip()
+            if not txt.islower():
+                print("Please enter only lowercase letters.")
+                continue
+            converted = txt.upper()
+            last_output = render_string(converted)
+            clear_screen()
+            display_output(last_output, last_color)
+
+
+        elif choice == "7":
             if not last_output:
                 print("Nothing to save.")
             else:
                 fname = input("Filename: ").strip() or "ascii_output.txt"
                 save_to_file(last_output, fname)
 
-        elif choice == "7":
+        elif choice == "8":
             print("Goodbye!")
             sys.exit()
 
         else:
             print("Invalid choice.")
 
-        if choice in {"1", "2", "3", "4", "5"}:
+        if choice in {"1", "2", "3", "4", "5", "6", "7"}:
             if input("Save output (y/n)? ").strip().lower() == "y":
                 fname = input("Filename: ").strip() or "ascii_output.txt"
                 save_to_file(last_output, fname)
