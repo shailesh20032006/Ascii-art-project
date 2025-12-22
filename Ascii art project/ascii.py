@@ -172,10 +172,6 @@ def run():
             clear_screen()
             display_output(last_output, last_color)
 
-        # ============================
-        # NEW OPTION 6
-        # lowercase → UPPERCASE
-        # ============================
         elif choice == "6":
             txt = input("Enter lowercase text: ").strip()
             if not txt.islower():
@@ -216,3 +212,4 @@ if __name__ == "__main__":
         run()
     except KeyboardInterrupt:
         print("\nInterrupted.")
+
